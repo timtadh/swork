@@ -13,6 +13,27 @@ making yet another project specific tool, I decided to write general purpose ext
 
 Swork is licensed under the terms of GPLv2, see the license file for details.
 
+Install
+=======
+
+first use pip to install the packages
+
+    pip install psutil # this is not done automatically for some reason...
+    pip install -e git://github.com/timtadh/swork.git#egg=swork
+
+then modify your .bashrc to make the command an alias for
+
+    source swork [args]
+
+eg.
+
+    alias swork="source `which swork`"
+
+for the lazy
+
+    echo 'alias swork="source `which swork`"' >> ~/.bashrc
+
+
 Usage
 =====
 
