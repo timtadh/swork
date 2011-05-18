@@ -6,7 +6,6 @@ Contact: tim.tadh@gmail.com,
     or via EECS Department of Case Western Reserve University, Cleveland Ohio
 Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 '''
-print 'hello'
 
 usage_message = \
 '''usage: swork [-hl] [start|restore|list] [project_name]
@@ -35,6 +34,8 @@ $ swork restore
 import sys
 from subprocess import check_call as run
 from getopt import getopt, GetoptError
+import sworklib
+from sworklib import log, output
 
 error_codes = {
     'usage':1,
@@ -47,26 +48,28 @@ def command(f):
   return f
 
 def usage(code=None):
-    print usage_message
+    log(usage_message)
     if code is None:
         code = error_codes['usage']
     sys.exit(code)
 
 @command
 def list():
-    print 'stub for listing projects'
+    log('stub for listing projects')
     sys.exit(error_codes['list'])
 
 @command
+@sworklib.usefiles(['env'])
 def start(args):
     if len(args) != 1:
-        print 'start requires a project_name'
+        log('start requires a project_name')
         usage(error_codes['option'])
-    print 'stub for starting a project'
+    sworklib.dumpenv()
+    output(sworklib.setenv(sworklib.loadenv()))
 
 @command
 def restore():
-    print 'stub for restoring the shell'
+    log('stub for restoring the shell')
 
 commands = dict((name, attr)
   for name, attr in locals().iteritems()
@@ -75,29 +78,32 @@ commands = dict((name, attr)
 
 def main():
     try:
-        opts, args = getopt(sys.argv[1:], 'h', ['help'])
+        opts, args = getopt(sys.argv[1:], 'hc', ['help', 'check'])
     except GetoptError, err:
-        print str(err)
+        log(err)
         usage(error_codes['option'])
 
+    check = False
     for opt, arg in opts:
         if opt in ('-h', '--help'):
              usage()
+        elif opt in ('-c', '--check'):
+             check = True
 
     if len(args) == 0:
-        print 'A subcommand is required'
+        log('A subcommand is required')
         usage(error_codes['option'])
 
     sub_cmd = args[0]
     if sub_cmd not in commands:
-        print 'command %s is not available'
+        log('command %s is not available')
         usage(error_codes['option'])
 
     cmd = commands[sub_cmd]
     if cmd.func_code.co_argcount == 1:
-        cmd(args[1:])
+        if not check: cmd(args[1:])
     else:
-        cmd()
+        if not check: cmd()
 
 
 if __name__ == '__main__':

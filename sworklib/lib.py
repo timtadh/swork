@@ -1,0 +1,85 @@
+#Swork - the project management utility.
+#Author: Tim Henderson
+#Contact: tim.tadh@gmail.com,
+    #or via EECS Department of Case Western Reserve University, Cleveland Ohio
+#Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
+
+import os, sys, tempfile
+
+tmpdir = tempfile.gettempdir()
+datadir = os.path.join(tmpdir, 'swork')
+
+def log(s):
+    sys.stderr.write(str(s))
+    sys.stderr.write('\n')
+    sys.stderr.flush()
+
+def output(s):
+    sys.stdout.write(str(s))
+    sys.stdout.write('\n')
+    sys.stdout.flush()
+
+## A utility function stolen from:
+# http://stackoverflow.com/questions/1158076/implement-touch-using-python/1160227#1160227
+def touch(fname, times = None):
+    fhandle = file(fname, 'a')
+    try:
+        os.utime(fname, times)
+    finally:
+        fhandle.close()
+
+def ttydir():
+    tty = os.ttyname(sys.stdin.fileno())
+    tty = tty.replace('/dev/', '').replace(os.path.sep, '_')
+    ttydir = os.path.join(datadir, tty)
+    if not os.path.exists(datadir):
+        os.mkdir(datadir)
+    if not os.path.exists(ttydir):
+        os.mkdir(ttydir)
+    return ttydir
+
+def usefiles(files):
+    d = ttydir()
+    for fname in files:
+        touch(os.path.join(d, fname))
+    return lambda f: f
+
+def getfile(fname):
+    return os.path.join(ttydir(), fname)
+
+def dumpenv():
+    env = open(getfile('env'), 'w')
+    try:
+        collect = list()
+        for name,data in os.environ.iteritems():
+            collect.append(':'.join((name, data.encode('hex'))))
+        data = '\n'.join(collect)
+        env.write(data)
+    finally:
+        env.close()
+
+def loadenv():
+    env = open(getfile('env'), 'r')
+    try:
+        data = env.read()
+    finally:
+        env.close()
+    d = dict()
+    for line in data.split('\n'):
+        name, value = line.split(':', 1)
+        d.update({name:value.decode('hex')})
+    return d
+
+def setenv(env):
+    collect = list()
+    unset = 'unset %s;'
+    export = "export %s='%s';"
+
+    for name in os.environ.keys():
+        collect.append(unset % name)
+
+    for name,val in env.iteritems():
+        collect.append(export % (name, val))
+
+    return '\n'.join(collect)
+
