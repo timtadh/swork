@@ -31,16 +31,19 @@ $ swork restore
 
 '''
 
-import sys
+import sys, os
 from subprocess import check_call as run
 from getopt import getopt, GetoptError
 import sworklib
 from sworklib import log, output
 
+CWD = os.getcwd()
+
 error_codes = {
     'usage':1,
     'option':2,
     'list':3,
+    'rcfile':4,
 }
 
 def command(f):
@@ -64,12 +67,24 @@ def start(args):
     if len(args) != 1:
         log('start requires a project_name')
         usage(error_codes['option'])
-    sworklib.dumpenv()
-    output(sworklib.setenv(sworklib.loadenv()))
+    project_name = args[0]
+    rc = sworklib.loadrc()
+    cmd = rc[project_name]['cmd']
+    root = rc[project_name]['root']
+    if rc == False:
+        usage(error_codes['rcfile'])
+    if project_name not in rc:
+        log('the project %s is not defined')
+        usage(error_codes['rcfile'])
+    sworklib.restore_env()
+    output('cd %s' % (root))
+    output('%s' % (cmd))
+    output('cd %s' % (CWD))
+
 
 @command
 def restore():
-    log('stub for restoring the shell')
+    sworklib.restore_env()
 
 commands = dict((name, attr)
   for name, attr in locals().iteritems()
@@ -77,6 +92,9 @@ commands = dict((name, attr)
 )
 
 def main():
+    if 'PS1' not in os.environ:
+        log('WARNING - you should run this by sourcing swork.')
+
     try:
         opts, args = getopt(sys.argv[1:], 'hc', ['help', 'check'])
     except GetoptError, err:
@@ -98,6 +116,10 @@ def main():
     if sub_cmd not in commands:
         log('command %s is not available')
         usage(error_codes['option'])
+
+    if sworklib.file_empty('env'):
+        log('dumping env')
+        sworklib.dumpenv()
 
     cmd = commands[sub_cmd]
     if cmd.func_code.co_argcount == 1:

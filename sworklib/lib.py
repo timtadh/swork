@@ -4,10 +4,12 @@
     #or via EECS Department of Case Western Reserve University, Cleveland Ohio
 #Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 
-import os, sys, tempfile
+import os, sys, tempfile, json
 
 tmpdir = tempfile.gettempdir()
 datadir = os.path.join(tmpdir, 'swork')
+homedir = os.path.abspath(os.environ.get('HOME', ''))
+rcfile = os.path.join(homedir, '.sworkrc')
 
 def log(s):
     sys.stderr.write(str(s))
@@ -47,6 +49,9 @@ def usefiles(files):
 def getfile(fname):
     return os.path.join(ttydir(), fname)
 
+def file_empty(fname):
+    return not bool(os.path.getsize(getfile(fname)))
+
 def dumpenv():
     env = open(getfile('env'), 'w')
     try:
@@ -83,3 +88,17 @@ def setenv(env):
 
     return '\n'.join(collect)
 
+def restore_env():
+    output(setenv(loadenv()))
+
+def loadrc():
+    if not os.path.exists(rcfile):
+        log('no rc file exists looked at: %s' % rcfile)
+        log('cannot continue please make an rcfile')
+        return False
+    f = open(rcfile, 'r')
+    try:
+        data = json.load(f)
+    finally:
+        f.close()
+    return data

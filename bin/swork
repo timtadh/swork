@@ -5,6 +5,18 @@
     #or via EECS Department of Case Western Reserve University, Cleveland Ohio
 #Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 
-python -m swork -c $@
-# echo $(python -m swork $@)
-eval $(python -m swork $@)
+IFS=$'\n'
+commands=$(python -m swork $@)
+if [ $? != '0' ]; then
+    echo "the python program failed"
+    return 1;
+fi
+
+for cmd in $commands
+do
+    echo $cmd;
+    eval $cmd;
+done
+unset IFS
+
+echo "swork wrapper finished!"
