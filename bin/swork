@@ -8,7 +8,7 @@
 IFS=$'\n'
 commands=$(python -m swork $@)
 if [ $? != '0' ]; then
-    echo "the python program failed"
+    echo "swork did not succeed, see error message and usage info."
     return 1;
 fi
 

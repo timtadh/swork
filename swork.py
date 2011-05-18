@@ -94,20 +94,28 @@ def start(args):
         usage(error_codes['option'])
     project_name = args[0]
     rc = sworklib.loadrc()
-    cmd = rc[project_name]['cmd']
-    root = rc[project_name]['root']
     if rc == False:
         usage(error_codes['rcfile'])
     if project_name not in rc:
-        log('the project %s is not defined')
-        usage(error_codes['rcfile'])
+        log('the project %s is not defined' % project_name)
+        sys.exit(error_codes['rcfile'])
+    proj = rc[project_name]
+    if 'cmd' not in proj:
+        log('a command to execute is not defined for project %s' % project_name)
+        sys.exit(error_codes['rcfile'])
+    if 'root' not in proj:
+        log('a root directory is not defined for project %s' % project_name)
+        sys.exit(error_codes['rcfile'])
+    cmd = proj['cmd']
+    root = proj['root']
+
     sworklib.restore_env()
     output('cd %s' % (root))
     output('%s' % (cmd))
     output('cd %s' % (CWD))
 
-
 @command
+@sworklib.usefiles(['env'])
 def restore():
     sworklib.restore_env()
 
