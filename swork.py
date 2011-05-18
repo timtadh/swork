@@ -20,6 +20,31 @@ sub commands:
   restore                          restores the original enviroment for the shell
   list                             list the available projects
 
+rc-file:
+  To use you must setup an rc file in you home directory.
+  eg.
+    $ touch ~/.sworkrc
+  the contents should be something like:
+    {
+        "project1" : {
+            "root":"/path/to/project/root",
+            "cmd":"source /path/to/project/root/then/setenv"
+        },
+        "project2" : {
+            "root":"/path/to/project/root",
+            "cmd":"source /path/to/project/root/then/setenv"
+        }
+    }
+  The contents must be valid json (as recognized by the python json lib) and
+  must have the schema:
+    project_name1 ->
+        root -> string
+        cmd -> string
+    project_name2 ->
+        root -> string
+        cmd -> string
+  where project_name can be any string
+
 Examples:
 
 Start working on a project call, day_job
