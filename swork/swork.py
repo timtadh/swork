@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 '''
 Swork - the project management utility.
-Author: Tim Henderson 
+Author: Tim Henderson
 Contact: tim.tadh@gmail.com,
     or via EECS Department of Case Western Reserve University, Cleveland Ohio
 Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 '''
+print 'hello'
 
 usage_message = \
 '''usage: swork [-hl] [start|restore|list] [project_name]
@@ -67,8 +68,8 @@ def start(args):
 def restore():
     print 'stub for restoring the shell'
 
-commands = dict((name, attr) 
-  for name, attr in locals().iteritems() 
+commands = dict((name, attr)
+  for name, attr in locals().iteritems()
   if hasattr(attr, 'command') and attr.command == True
 )
 
@@ -78,27 +79,27 @@ def main():
     except GetoptError, err:
         print str(err)
         usage(error_codes['option'])
-    
+
     for opt, arg in opts:
         if opt in ('-h', '--help'):
              usage()
-    
+
     if len(args) == 0:
         print 'A subcommand is required'
         usage(error_codes['option'])
-    
+
     sub_cmd = args[0]
     if sub_cmd not in commands:
         print 'command %s is not available'
         usage(error_codes['option'])
-    
+
     cmd = commands[sub_cmd]
     if cmd.func_code.co_argcount == 1:
         cmd(args[1:])
     else:
         cmd()
-    
-    
+
+
 if __name__ == '__main__':
     main()
 

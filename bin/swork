@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+
+
+echo "hello"
+python -m swork
