@@ -33,6 +33,10 @@ for the lazy
 
     echo 'alias swork="source `which swork`"' >> ~/.bashrc
 
+## Updating, Staying Current
+
+    pip install --upgrade -e git://github.com/timtadh/swork.git#egg=swork
+
 
 Usage
 =====
