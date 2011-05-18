@@ -41,7 +41,9 @@ error_codes = {
     'list':3,
 }
 
-commands = ['start', 'restore', 'list']
+def command(f):
+  setattr(f, 'command', True)
+  return f
 
 def usage(code=None):
     print usage_message
@@ -49,9 +51,26 @@ def usage(code=None):
         code = error_codes['usage']
     sys.exit(code)
 
+@command
 def list():
     print 'stub for listing projects'
     sys.exit(error_codes['list'])
+
+@command
+def start(args):
+    if len(args) != 1:
+        print 'start requires a project_name'
+        usage(error_codes['option'])
+    print 'stub for starting a project'
+
+@command
+def restore():
+    print 'stub for restoring the shell'
+
+commands = dict((name, attr) 
+  for name, attr in locals().iteritems() 
+  if hasattr(attr, 'command') and attr.command == True
+)
 
 def main():
     try:
@@ -66,13 +85,19 @@ def main():
     
     if len(args) == 0:
         print 'A subcommand is required'
-        usage(error_codes['options'])
+        usage(error_codes['option'])
     
     sub_cmd = args[0]
     if sub_cmd not in commands:
         print 'command %s is not available'
-        usage(error_codes['options'])
-
+        usage(error_codes['option'])
+    
+    cmd = commands[sub_cmd]
+    if cmd.func_code.co_argcount == 1:
+        cmd(args[1:])
+    else:
+        cmd()
+    
     
 if __name__ == '__main__':
     main()
