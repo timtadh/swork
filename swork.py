@@ -83,8 +83,19 @@ def usage(code=None):
 
 @command
 def list():
-    log('stub for listing projects')
-    sys.exit(error_codes['list'])
+    rc = sworklib.loadrc()
+    if rc == False:
+        usage(error_codes['rcfile'])
+    for name, proj in rc.iteritems():
+        if 'cmd' not in proj:
+            log('a command to execute is not defined for project %s' % project_name)
+            sys.exit(error_codes['rcfile'])
+        if 'root' not in proj:
+            log('a root directory is not defined for project %s' % project_name)
+            sys.exit(error_codes['rcfile'])
+        log(name)
+        log(' '*4 + 'root : ' + proj['root'])
+        log(' '*4 + 'cmd : ' + proj['cmd'])
 
 @command
 @sworklib.usefiles(['env'])

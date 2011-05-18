@@ -4,7 +4,19 @@
     #or via EECS Department of Case Western Reserve University, Cleveland Ohio
 #Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 
-import os, sys, tempfile, json, psutil
+import os, sys, tempfile, psutil
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
+if hasattr(json, 'load'):
+    json_load = json.load
+else:
+    def json_load(f):
+        data = f.read()
+        return json.read(data)
 
 tmpdir = tempfile.gettempdir()
 datadir = os.path.join(tmpdir, 'swork')
@@ -101,7 +113,7 @@ def loadrc():
         return False
     f = open(rcfile, 'r')
     try:
-        data = json.load(f)
+        data = json_load(f)
     finally:
         f.close()
     return data
