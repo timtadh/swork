@@ -151,7 +151,6 @@ def main():
         usage(error_codes['option'])
 
     if sworklib.file_empty('env'):
-        log('dumping env')
         sworklib.dumpenv()
 
     cmd = commands[sub_cmd]

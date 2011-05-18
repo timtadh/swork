@@ -4,7 +4,7 @@
     #or via EECS Department of Case Western Reserve University, Cleveland Ohio
 #Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 
-import os, sys, tempfile, json
+import os, sys, tempfile, json, psutil
 
 tmpdir = tempfile.gettempdir()
 datadir = os.path.join(tmpdir, 'swork')
@@ -33,6 +33,7 @@ def touch(fname, times = None):
 def ttydir():
     tty = os.ttyname(sys.stdin.fileno())
     tty = tty.replace('/dev/', '').replace(os.path.sep, '_')
+    tty = tty + '_' + str(psutil.Process(os.getppid()).ppid)
     ttydir = os.path.join(datadir, tty)
     if not os.path.exists(datadir):
         os.mkdir(datadir)
@@ -53,7 +54,9 @@ def file_empty(fname):
     return not bool(os.path.getsize(getfile(fname)))
 
 def dumpenv():
-    env = open(getfile('env'), 'w')
+    envname = getfile('env')
+    log('saving enviroment to ... %s' % envname)
+    env = open(envname, 'w')
     try:
         collect = list()
         for name,data in os.environ.iteritems():
