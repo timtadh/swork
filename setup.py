@@ -12,6 +12,7 @@ setup(name='swork',
       license='GPLv2',
       packages=['sworklib'],
       scripts=['bin/swork'],
+      modules=['swork'],
       platforms=['unix'],
       requires=['psutil']
 )
