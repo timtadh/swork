@@ -41,6 +41,18 @@ Restore the original enviroment
 
     $ swork restore
 
+cd to a project:
+
+    $ swork cd proj1
+    $ pwd
+    /path/to/proj1
+
+cd to a sub-dir of a project:
+
+    $ swork cd proj1/sub/directory
+    $ pwd
+    /path/to/proj1/sub/directory
+
 
 Install
 =======
