@@ -24,26 +24,30 @@ rc-file:
   To use you must setup an rc file in you home directory.
   eg.
     $ touch ~/.sworkrc
-  the contents should be something like:
+the contents should be something like:
     {
         "project1" : {
             "root":"/path/to/project/root",
-            "cmd":"source /path/to/project/root/then/setenv"
+            "start_cmd":"source /path/to/project/root/then/setenv"
+            "teardown_cmd":"echo 'project1 teardown'"
         },
         "project2" : {
             "root":"/path/to/project/root",
-            "cmd":"source /path/to/project/root/then/setenv"
+            "start_cmd":"source /path/to/project/root/then/setenv"
+            "teardown_cmd":"echo 'project2 teardown'"
         }
     }
-  The contents must be valid json (as recognized by the python json lib) and
-  must have the schema:
+The contents must be valid json (as recognized by the python json lib) and
+must have the schema:
     project_name1 ->
         root -> string
-        cmd -> string
+        start_cmd -> string
+        teardown_cmd -> string
     project_name2 ->
         root -> string
-        cmd -> string
-  where project_name can be any string
+        start_cmd -> string
+        teardown_cmd -> string
+where project_name can be any string (including the empty string).
 
 Examples:
 
@@ -114,7 +118,8 @@ def start(args):
     cmd = proj['start_cmd']
     root = proj['root']
 
-    restore()
+    sworklib.popproj()
+    sworklib.restore_env()
     output('cd %s' % (root))
     output('%s' % (cmd))
     output('cd %s' % (CWD))

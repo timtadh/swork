@@ -5,7 +5,7 @@ by: Tim Henderson (tim.tadh@gmail.com)
 
 Command line utility to start up enviroments for particular projects. Project configuration scripts can be any executable file and are associated with a particular project via ~/.sworkrc
 file. The utility saves the enviroment variables that exist before its execution and restores
-them as necessary.
+them as necessary. It can also call teardown scripts as necessary when switching projects (or restoring the original shell).
 
 I have previously written very complex enviroment management tools for particular projects.
 Facing the prospect of making yet another project specific tool, I decided to write a general
@@ -90,22 +90,26 @@ Usage
         {
             "project1" : {
                 "root":"/path/to/project/root",
-                "cmd":"source /path/to/project/root/then/setenv"
+                "start_cmd":"source /path/to/project/root/then/setenv"
+                "teardown_cmd":"echo 'project1 teardown'"
             },
             "project2" : {
                 "root":"/path/to/project/root",
-                "cmd":"source /path/to/project/root/then/setenv"
+                "start_cmd":"source /path/to/project/root/then/setenv"
+                "teardown_cmd":"echo 'project2 teardown'"
             }
         }
     The contents must be valid json (as recognized by the python json lib) and
     must have the schema:
         project_name1 ->
             root -> string
-            cmd -> string
+            start_cmd -> string
+            teardown_cmd -> string
         project_name2 ->
             root -> string
-            cmd -> string
-    where project_name can be any string
+            start_cmd -> string
+            teardown_cmd -> string
+    where project_name can be any string (including the empty string).
 
     Examples:
 
