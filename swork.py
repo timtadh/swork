@@ -158,7 +158,7 @@ def main():
 
     sub_cmd = args[0]
     if sub_cmd not in commands:
-        log('command %s is not available')
+        log('command %s is not available' % sub_cmd)
         usage(error_codes['option'])
 
     if sworklib.file_empty('env'):
