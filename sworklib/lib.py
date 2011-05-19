@@ -19,6 +19,7 @@ else:
         data = f.read()
         return json.read(data)
 
+shellpid = str(psutil.Process(os.getppid()).ppid)
 tmpdir = tempfile.gettempdir()
 datadir = os.path.join(tmpdir, 'swork')
 homedir = os.path.abspath(os.environ.get('HOME', ''))
@@ -46,7 +47,7 @@ def touch(fname, times = None):
 def ttydir():
     tty = os.ttyname(sys.stdin.fileno())
     tty = tty.replace('/dev/', '').replace(os.path.sep, '_')
-    tty = tty + '_' + str(psutil.Process(os.getppid()).ppid)
+    tty = tty + '_' + shellpid
     ttydir = os.path.join(datadir, tty)
     if not os.path.exists(datadir):
         os.mkdir(datadir)
@@ -58,7 +59,6 @@ def usefiles(files):
     d = ttydir()
     for fname in files:
         touch(os.path.join(d, fname))
-    return lambda f: f
 
 def getfile(fname):
     return os.path.join(ttydir(), fname)
@@ -128,3 +128,21 @@ def loadrc():
             log('a root directory is not defined for project %s' % name)
             return False
     return data
+
+def pushproj(name):
+    cur = open(getfile('cur'), 'w')
+    cur.write(name)
+    cur.close()
+
+def popproj():
+    cur = open(getfile('cur'), 'r')
+    name = cur.read().strip()
+    cur.close()
+    open(getfile('cur'), 'w').close()
+
+    if not name: return
+    rc = loadrc()
+    if name not in rc: return
+    proj = rc[name]
+    output('cd %s' % (proj['root']))
+    output(proj['teardown_cmd'])

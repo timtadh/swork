@@ -62,7 +62,8 @@ from getopt import getopt, GetoptError
 import sworklib
 from sworklib import log, output
 
-CWD = os.getcwd()
+CWD = os.environ.get('PWD', os.getcwd())
+sworklib.usefiles(['env', 'cur'])
 
 error_codes = {
     'usage':1,
@@ -97,7 +98,6 @@ def list():
         log(' '*4 + 'teardown_cmd : ' + proj['teardown_cmd'])
 
 @command
-@sworklib.usefiles(['env'])
 def start(args):
     '''excutes the start command.'''
     if len(args) != 1:
@@ -114,16 +114,18 @@ def start(args):
     cmd = proj['start_cmd']
     root = proj['root']
 
-    sworklib.restore_env()
+    restore()
     output('cd %s' % (root))
     output('%s' % (cmd))
     output('cd %s' % (CWD))
+    sworklib.pushproj(project_name)
 
 @command
-@sworklib.usefiles(['env'])
 def restore():
     '''restores the shell to its original state.'''
+    sworklib.popproj()
     sworklib.restore_env()
+    output('cd %s' % (CWD))
 
 commands = dict((name, attr)
   for name, attr in locals().iteritems()
