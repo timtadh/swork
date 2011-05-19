@@ -90,6 +90,29 @@ def usage(code=None):
     sys.exit(code)
 
 @command
+def cd(args):
+    '''cd to the root directory, or too the sub-directory indicated'''
+    if len(args) < 1:
+        log('cd requires a project_name, you gave %s' % str(args))
+        usage(error_codes['option'])
+    project_name = args[0]
+    next = ''
+    if os.path.sep in project_name:
+        project_name, next = project_name.split(os.path.sep, 1)
+    rc = sworklib.loadrc()
+    if rc == False:
+        usage(error_codes['rcfile'])
+    if project_name not in rc:
+        log('the project %s is not defined' % project_name)
+        sys.exit(error_codes['rcfile'])
+    proj = rc[project_name]
+    root = proj['root']
+
+    if next == '' and len(args) == 2:
+        next = args[1]
+    output("cd %s" % os.path.join(root, next))
+
+@command
 def list():
     '''Lists all available projects.'''
     rc = sworklib.loadrc()
