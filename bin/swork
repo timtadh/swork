@@ -5,13 +5,13 @@
     #or via EECS Department of Case Western Reserve University, Cleveland Ohio
 #Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 
-IFS=$'\n'
 commands=$(/usr/bin/python -m swork $@)
 if [ $? != '0' ]; then
     echo "swork did not succeed, see error message and usage info."
     return 1;
 fi
 
+IFS=$'\n'
 for cmd in $commands
 do
 #     echo $cmd;
