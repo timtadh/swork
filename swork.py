@@ -19,8 +19,12 @@ sub commands:
   start project_name               sets up the enviroment for *project_name*
   restore                          restores the original enviroment for the shell
   list                             list the available projects
+  cd project_name [sub-path]       cd into a directory relative to the root directory
+     project_name[/sub-path]          of *project_name*
+'''
 
-rc-file:
+extended_message = \
+'''rc-file:
   To use you must setup an rc file in you home directory.
   eg.
     $ touch ~/.sworkrc
@@ -58,6 +62,21 @@ Stop working on the last started project and restore the shell to the original
 state:
 $ swork restore
 
+cd to a project:
+$ swork cd proj1
+$ pwd
+/path/to/proj1
+
+cd to a sub-dir of a project:
+$ swork cd proj1 sub/directory
+$ pwd
+/path/to/proj1/sub/directory
+
+alternate syntax:
+$ swork cd proj1/sub/directory
+$ pwd
+/path/to/proj1/sub/directory
+
 '''
 
 import sys, os
@@ -86,6 +105,7 @@ def usage(code=None):
     is not given it exits with error_codes['usage']'''
     log(usage_message)
     if code is None:
+        log(extended_message)
         code = error_codes['usage']
     sys.exit(code)
 

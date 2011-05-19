@@ -81,6 +81,8 @@ Usage
     start project_name               sets up the enviroment for *project_name*
     restore                          restores the original enviroment for the shell
     list                             list the available projects
+    cd project_name [sub-path]       cd into a directory relative to the root directory
+       project_name[/sub-path]          of *project_name*
 
     rc-file:
     To use you must setup an rc file in you home directory.
@@ -119,4 +121,20 @@ Usage
     Stop working on the last started project and restore the shell to the original
     state:
     $ swork restore
+
+    cd to a project:
+    $ swork cd proj1
+    $ pwd
+    /path/to/proj1
+
+    cd to a sub-dir of a project:
+    $ swork cd proj1 sub/directory
+    $ pwd
+    /path/to/proj1/sub/directory
+
+    alternate syntax:
+    $ swork cd proj1/sub/directory
+    $ pwd
+    /path/to/proj1/sub/directory
+
 
