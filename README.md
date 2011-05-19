@@ -13,6 +13,28 @@ making yet another project specific tool, I decided to write general purpose ext
 
 Swork is licensed under the terms of GPLv2, see the license file for details.
 
+Examples
+========
+
+List your projects:
+
+    $ swork list
+    hca
+        root : /home/hendersont/stuff/Programing/hca
+        cmd : source /home/hendersont/stuff/Programing/hca/setenv
+    project2
+        root : /home/hendersont/stuff/Programing/project2
+        cmd : source /home/hendersont/envs/project2
+
+Setup the enviroment:
+
+    $ swork start project_name
+
+Restore the original enviroment
+
+    $ swork restore
+
+
 Install
 =======
 
@@ -33,7 +55,7 @@ for the lazy
 
     echo 'alias swork="source `which swork`"' >> ~/.bashrc
 
-## Updating, Staying Current
+### Updating, Staying Current
 
     pip install --upgrade -e git://github.com/timtadh/swork.git#egg=swork
 

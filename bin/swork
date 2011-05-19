@@ -6,7 +6,7 @@
 #Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 
 IFS=$'\n'
-commands=$(python -m swork $@)
+commands=$(/usr/bin/python -m swork $@)
 if [ $? != '0' ]; then
     echo "swork did not succeed, see error message and usage info."
     return 1;
@@ -14,9 +14,9 @@ fi
 
 for cmd in $commands
 do
-    echo $cmd;
+#     echo $cmd;
     eval $cmd;
 done
 unset IFS
 
-echo "swork wrapper finished!"
+# echo "... now start your work!"
