@@ -21,6 +21,8 @@ Swork is licensed under the terms of GPLv2, see the license file for details.
 swork only supports the Bash shell right now. It would be fairly trivially to add another shell
 however, I will only do so if there is a user for it. If you would like to swork with another shell besides bash please email me. (or you know this is the 2011 you could fork it and add it yourself).
 
+swork may also support zsh althought this is entirely untested.
+
 Examples
 ========
 
