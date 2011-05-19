@@ -3,16 +3,13 @@ SWORK
 
 by: Tim Henderson (tim.tadh@gmail.com)
 
-Command line utility to start up enviroments for particular projects. Project configuration scripts
-can be any executable file and are associated with a particular project via ~/.sworkrc file. The
-utility saves the enviroment variables that exist before its execution and restores them as
-necessary.
+Command line utility to start up enviroments for particular projects. Project configuration scripts can be any executable file and are associated with a particular project via ~/.sworkrc
+file. The utility saves the enviroment variables that exist before its execution and restores
+them as necessary.
 
-Swork is still in an early stage but should be useful at the end of today. (hopefully by this
-morning in fact). My intention is to incrementally improve it as my needs evolve. I have
-previously written very complex enviroment management tools for particular projects. Facing the
-prospect of making yet another project specific tool, I decided to write a general purpose
-extensible tool.
+I have previously written very complex enviroment management tools for particular projects.
+Facing the prospect of making yet another project specific tool, I decided to write a general
+purpose extensible tool.
 
 Swork is licensed under the terms of GPLv2, see the license file for details.
 
@@ -73,7 +70,7 @@ for the lazy
 Usage
 =====
 
-    usage: swork [-hl] [start|restore|list] [project_name]
+    usage: swork [-h] [start|restore|list] [project_name]
 
     setups the enviroment to work on a particular project
 

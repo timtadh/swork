@@ -117,4 +117,14 @@ def loadrc():
         data = json_load(f)
     finally:
         f.close()
+    for name, proj in data.iteritems():
+        if 'start_cmd' not in proj:
+            log('a start command is not defined for project %s' % name)
+            return False
+        if 'teardown_cmd' not in proj:
+            log('a teardown command is not defined for project %s' % name)
+            return False
+        if 'root' not in proj:
+            log('a root directory is not defined for project %s' % name)
+            return False
     return data
