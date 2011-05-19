@@ -72,10 +72,13 @@ error_codes = {
 }
 
 def command(f):
-  setattr(f, 'command', True)
-  return f
+    '''A decorator to mark a function as shell sub-command.'''
+    setattr(f, 'command', True)
+    return f
 
 def usage(code=None):
+    '''Prints the usage and exits with an error code specified by code. If code
+    is not given it exits with error_codes['usage']'''
     log(usage_message)
     if code is None:
         code = error_codes['usage']
@@ -83,6 +86,7 @@ def usage(code=None):
 
 @command
 def list():
+    '''Lists all available projects.'''
     rc = sworklib.loadrc()
     if rc == False:
         usage(error_codes['rcfile'])
@@ -100,6 +104,7 @@ def list():
 @command
 @sworklib.usefiles(['env'])
 def start(args):
+    '''excutes the start command.'''
     if len(args) != 1:
         log('start requires a project_name')
         usage(error_codes['option'])
@@ -128,6 +133,7 @@ def start(args):
 @command
 @sworklib.usefiles(['env'])
 def restore():
+    '''restores the shell to its original state.'''
     sworklib.restore_env()
 
 commands = dict((name, attr)
@@ -136,9 +142,11 @@ commands = dict((name, attr)
 )
 
 def main():
+    ## PS1 not being available is a strong indication this file wasn't sourced correctly
     if 'PS1' not in os.environ:
         log('WARNING - you should run this by sourcing swork.')
 
+    ## getopt setup
     try:
         opts, args = getopt(sys.argv[1:], 'hc', ['help', 'check'])
     except GetoptError, err:

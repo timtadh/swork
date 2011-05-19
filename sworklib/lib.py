@@ -6,6 +6,7 @@
 
 import os, sys, tempfile, psutil
 
+## A bunch of cheese to make this more portable around different json libs.
 try:
     import json
 except ImportError:
