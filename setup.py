@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='swork',
-      version='0.1',
+      version='0.2',
       description=(
         'A shell enviroment manager. Allows you to easily manage the shell enviroment for'
         'working on various projects.'
