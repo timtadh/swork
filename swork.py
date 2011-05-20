@@ -8,7 +8,7 @@ Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 '''
 
 usage_message = \
-'''usage: swork [-hl] [start|restore|list] [project_name]
+'''usage: swork [-h] [start|restore|list] [project_name]
 
 setups the enviroment to work on a particular project
 
@@ -26,6 +26,7 @@ sub commands:
      project_name[/sub-path]          of *project_name*
 
   update_swork                     starts auto updater
+    --sudo                         use the sudoed version of the update command
 '''
 
 extended_message = \
