@@ -111,6 +111,7 @@ error_codes = {
     'option':2,
     'list':3,
     'rcfile':4,
+    'version':0,
 }
 
 def command(f):
@@ -254,7 +255,7 @@ def main():
 
     ## getopt setup
     try:
-        opts, args = getopt(sys.argv[1:], 'h', ['help'])
+        opts, args = getopt(sys.argv[1:], 'hv', ['help', 'version'])
     except GetoptError, err:
         log(err)
         usage(error_codes['option'])
@@ -262,6 +263,9 @@ def main():
     for opt, arg in opts:
         if opt in ('-h', '--help'):
             usage()
+        elif opt in ('-v', '--version'):
+            log(RELEASE)
+            sys.exit(error_codes['version'])
 
     if len(args) == 0:
         log('A subcommand is required')
