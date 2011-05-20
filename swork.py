@@ -93,6 +93,12 @@ from sworklib import log, output
 
 CWD = os.environ.get('PWD', os.getcwd())
 sworklib.usefiles(['env', 'cur'])
+RELEASE = '0.2'
+SRC_DIR = "$HOME/.src"
+UPDATE_CMD = (
+  'pip install --src="%s" --upgrade -e '
+  'git://github.com/timtadh/swork.git@%s#egg=swork'
+)
 
 error_codes = {
     'usage':1,
@@ -204,20 +210,28 @@ def restore():
 @command
 def update(args):
     try:
-        opts, args = getopt(args, 's', ['sudo'])
+        opts, args = getopt(args, 'sr:', ['sudo', 'src=', 'release='])
     except GetoptError, err:
         log(err)
         usage(error_codes['option'])
 
     sudo = False
+    src_dir = SRC_DIR
+    release = RELEASE
     for opt, arg in opts:
         if opt in ('-s', '--sudo'):
             sudo = True
+        elif opt in ('-r', '--release'):
+            release = arg
+        elif opt in ('--src',):
+            src_dir = arg
+
+    cmd = UPDATE_CMD % (src_dir, release)
 
     if sudo:
-        output('sudo pip install --src="$HOME/.src" --upgrade -e git://github.com/timtadh/swork.git#egg=swork')
+        output('sudo %s' % cmd)
     else:
-        output('pip install --src="$HOME/.src" --upgrade -e git://github.com/timtadh/swork.git#egg=swork')
+        output(cmd)
 
 commands = dict((name, attr)
   for name, attr in locals().iteritems()
