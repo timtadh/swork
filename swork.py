@@ -17,7 +17,8 @@ flags:
 
 sub commands:
   start project_name               sets up the enviroment for *project_name*
-    -c [sub-dir]                   cd into the specified sub-dir after starting the project
+    -c                             start and cd into a directory relative to the root
+                                   eg. start -c project_name/some/sub/dir
 
   restore                          restores the original enviroment for the shell
   list                             list the available projects
@@ -151,7 +152,7 @@ def start(args):
     '''excutes the start command.'''
 
     try:
-        opts, args = getopt(args, 'c:', ['cd='])
+        opts, args = getopt(args, 'c', ['cd'])
     except GetoptError, err:
         log(err)
         usage(error_codes['option'])
@@ -159,15 +160,18 @@ def start(args):
     cd = False
     for opt, arg in opts:
         if opt in ('-c', '--cd'):
-            cd = arg
+            cd = True
 
-    if len(args) != 1:
+    if len(args) < 1:
         log('start requires a project_name')
-        if cd:
-            log('perhaps you forgot an argument to cd?')
-            log('you gave: %s' % opts)
         usage(error_codes['option'])
-    project_name = args[0]
+
+    next = ''
+    if cd and os.path.sep in ' '.join(args):
+        project_name, next = ' '.join(args).split(os.path.sep, 1)
+    else:
+        project_name = args[0]
+
     rc = sworklib.loadrc()
     if rc == False:
         usage(error_codes['rcfile'])
@@ -185,7 +189,7 @@ def start(args):
     output('cd %s' % (CWD))
     sworklib.pushproj(project_name)
     if cd:
-        output("cd %s" % os.path.join(root, cd))
+        output("cd %s" % os.path.join(root, next))
 
 @command
 def restore():
