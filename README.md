@@ -74,8 +74,8 @@ Install
 =======
 
 first use pip to install the packages (this install the current stable version 0.2). If
-you would like to install the master remove "@r0.2". Or simply update the with
-`--release=master`.
+you would like to install the master remove "@r0.2". Or simply update aftwards with
+`swork update [-s] --release=master`.
 
     pip install psutil # this is not done automatically for some reason...
     pip install --src="$HOME/.src" -e git://github.com/timtadh/swork.git@r0.2#egg=swork
