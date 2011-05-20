@@ -226,6 +226,9 @@ def update(args):
         elif opt in ('--src',):
             src_dir = arg
 
+    if release[0].isdigit():
+        release = 'r' + release
+
     cmd = UPDATE_CMD % (src_dir, release)
 
     if sudo:
