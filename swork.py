@@ -28,7 +28,7 @@ sub commands:
   cd project_name [sub-path]       cd into a directory relative to the root directory
      project_name[/sub-path]          of *project_name*
 
-  update_swork                     starts auto updater
+  update                           starts auto updater
     --sudo                         use the sudoed version of the update command
     --release=<rel-num>            which release eg. "master", "0.2" etc.
     --src=<dir>                    what directory should it check the source into

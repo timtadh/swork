@@ -1,7 +1,17 @@
 SWORK
 =====
 
-by: Tim Henderson (tim.tadh@gmail.com)
+by Tim Henderson (tim.tadh@gmail.com)
+
+## Table of Contents
+
+1. Introduction
+2. Examples
+3. Install
+4. Usage
+
+Introduction
+============
 
 Command line utility to start up enviroments for particular projects. Project configuration scripts can be any executable file and are associated with a particular project via ~/.sworkrc
 file. The utility saves the enviroment variables that exist before its execution and restores
@@ -86,7 +96,8 @@ for the lazy
 
 You can update one of two ways. First you can use the built in update command. Giving it
 the sudo option causes it to automatically preprend sudo to the generated command. This
-checks out the head of the release branch you are on. (eg. 0.2).
+checks out the head of the release branch you are on. (eg. 0.2). See the Usage section
+for more details on the update command.
 
     swork update [--sudo]
 
