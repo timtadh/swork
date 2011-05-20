@@ -110,12 +110,17 @@ Usage
                                      eg. start -c project_name/some/sub/dir
 
     restore                          restores the original enviroment for the shell
+
     list                             list the available projects
+
     cd project_name [sub-path]       cd into a directory relative to the root directory
        project_name[/sub-path]          of *project_name*
 
     update_swork                     starts auto updater
         --sudo                       use the sudoed version of the update command
+        --release=<rel-num>          which release eg. "master", "0.2" etc.
+        --src=<dir>                  what directory should it check the source into
+                                        defaults to $HOME/.src/
 
     rc-file:
     To use you must setup an rc file in you home directory.
