@@ -17,6 +17,8 @@ flags:
 
 sub commands:
   start project_name               sets up the enviroment for *project_name*
+    -c [sub-dir]                   cd into the specified sub-dir after starting the project
+
   restore                          restores the original enviroment for the shell
   list                             list the available projects
   cd project_name [sub-path]       cd into a directory relative to the root directory
@@ -147,8 +149,23 @@ def list():
 @command
 def start(args):
     '''excutes the start command.'''
+
+    try:
+        opts, args = getopt(args, 'c:', ['cd='])
+    except GetoptError, err:
+        log(err)
+        usage(error_codes['option'])
+
+    cd = False
+    for opt, arg in opts:
+        if opt in ('-c', '--cd'):
+            cd = arg
+
     if len(args) != 1:
         log('start requires a project_name')
+        if cd:
+            log('perhaps you forgot an argument to cd?')
+            log('you gave: %s' % opts)
         usage(error_codes['option'])
     project_name = args[0]
     rc = sworklib.loadrc()
@@ -167,6 +184,8 @@ def start(args):
     output('%s' % (cmd))
     output('cd %s' % (CWD))
     sworklib.pushproj(project_name)
+    if cd:
+        output("cd %s" % os.path.join(root, cd))
 
 @command
 def restore():
@@ -187,17 +206,14 @@ def main():
 
     ## getopt setup
     try:
-        opts, args = getopt(sys.argv[1:], 'hc', ['help', 'check'])
+        opts, args = getopt(sys.argv[1:], 'h', ['help'])
     except GetoptError, err:
         log(err)
         usage(error_codes['option'])
 
-    check = False
     for opt, arg in opts:
         if opt in ('-h', '--help'):
-             usage()
-        elif opt in ('-c', '--check'):
-             check = True
+            usage()
 
     if len(args) == 0:
         log('A subcommand is required')
@@ -213,9 +229,9 @@ def main():
 
     cmd = commands[sub_cmd]
     if cmd.func_code.co_argcount == 1:
-        if not check: cmd(args[1:])
+        cmd(args[1:])
     else:
-        if not check: cmd()
+        cmd()
 
 
 if __name__ == '__main__':

@@ -60,7 +60,7 @@ Install
 first use pip to install the packages
 
     pip install psutil # this is not done automatically for some reason...
-    pip install -e git://github.com/timtadh/swork.git#egg=swork
+    pip install --src="$HOME/.src" -e git://github.com/timtadh/swork.git#egg=swork
 
 then modify your .bashrc to make the command an alias for
 
@@ -76,7 +76,7 @@ for the lazy
 
 ### Updating, Staying Current
 
-    pip install --upgrade -e git://github.com/timtadh/swork.git#egg=swork
+    pip install --src="$HOME/.src" --upgrade -e git://github.com/timtadh/swork.git#egg=swork
 
 
 Usage
