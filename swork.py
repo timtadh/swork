@@ -24,6 +24,8 @@ sub commands:
   list                             list the available projects
   cd project_name [sub-path]       cd into a directory relative to the root directory
      project_name[/sub-path]          of *project_name*
+
+  update_swork                     starts auto updater
 '''
 
 extended_message = \
@@ -197,6 +199,24 @@ def restore():
     sworklib.popproj()
     sworklib.restore_env()
     output('cd %s' % (CWD))
+
+@command
+def update(args):
+    try:
+        opts, args = getopt(args, 's', ['sudo'])
+    except GetoptError, err:
+        log(err)
+        usage(error_codes['option'])
+
+    sudo = False
+    for opt, arg in opts:
+        if opt in ('-s', '--sudo'):
+            sudo = True
+
+    if sudo:
+        output('sudo pip install --src="$HOME/.src" --upgrade -e git://github.com/timtadh/swork.git#egg=swork')
+    else:
+        output('pip install --src="$HOME/.src" --upgrade -e git://github.com/timtadh/swork.git#egg=swork')
 
 commands = dict((name, attr)
   for name, attr in locals().iteritems()
