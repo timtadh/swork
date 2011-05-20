@@ -97,7 +97,7 @@ RELEASE = '0.2'
 SRC_DIR = "$HOME/.src"
 UPDATE_CMD = (
   'pip install --src="%s" --upgrade -e '
-  'git://github.com/timtadh/swork.git@%s#egg=swork'
+  'git://github.com/timtadh/swork.git@origin/%s#egg=swork'
 )
 
 error_codes = {
