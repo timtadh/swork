@@ -103,7 +103,7 @@ RELEASE = 'master'
 SRC_DIR = "$HOME/.src"
 UPDATE_CMD = (
   'pip install --src="%s" --upgrade -e '
-  'git://github.com/timtadh/swork.git@origin/%s#egg=swork'
+  'git://github.com/timtadh/swork.git@%s#egg=swork'
 )
 
 error_codes = {
@@ -217,7 +217,7 @@ def restore():
 @command
 def update(args):
     try:
-        opts, args = getopt(args, 'sr:', ['sudo', 'src=', 'release='])
+        opts, args = getopt(args, 'sr:', ['sudo', 'src=', 'release=', 'commit='])
     except GetoptError, err:
         log(err)
         usage(error_codes['option'])
@@ -225,6 +225,7 @@ def update(args):
     sudo = False
     src_dir = SRC_DIR
     release = RELEASE
+    commit = None
     for opt, arg in opts:
         if opt in ('-s', '--sudo'):
             sudo = True
@@ -232,11 +233,17 @@ def update(args):
             release = arg
         elif opt in ('--src',):
             src_dir = arg
+        elif opt in ('--commit',):
+            commit = arg
 
     if release[0].isdigit():
         release = 'r' + release
+    release = 'origin/' + release
 
-    cmd = UPDATE_CMD % (src_dir, release)
+    if commit is not None:
+        cmd = UPDATE_CMD % (src_dir, commit)
+    else:
+        cmd = UPDATE_CMD % (src_dir, release)
 
     if sudo:
         output('sudo %s' % cmd)
