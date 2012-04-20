@@ -33,7 +33,7 @@ add another shell however, I will only do so if there is a user for it. If you
 would like to swork with another shell besides bash please email me. (or you
 know this is the 2011 you could fork it and add it yourself).
 
-swork may also support zsh althought this is entirely untested.
+swork may also support zsh although this is entirely untested.
 
 Examples
 ========
@@ -94,7 +94,7 @@ project by:
 Install
 =======
 
-first use pip to install the packages (this install the current stable version
+first use pip to install the packages (this installs the current stable version
 0.3). If you would like to install the master remove "@r0.3". Or simply update
 aftwards with `swork update [-s] --release=master`.
 
