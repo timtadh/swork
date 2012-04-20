@@ -190,9 +190,9 @@ def add(args):
         log("need to specify project name")
         usage(error_codes['option'])
     
-    rc = sworklib.loadrc()
+    rc = sworklib.loadrc(True)
     if rc == False:
-        usage(error_codes['rcfile'])
+        rc = dict()
 
     name = args[0]
     if name in rc:

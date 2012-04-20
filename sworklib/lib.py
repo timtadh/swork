@@ -45,7 +45,9 @@ def edittext(editor, text='', path=None):
     else:
         assert not text
         unlink = False
-    subprocess.check_call([editor, path])
+    tty = os.ttyname(sys.stdin.fileno())
+    stdout = open(tty, 'w')
+    subprocess.check_call([editor, path], stdout=stdout, stdin=sys.stdin)
     f = open(path, 'r')
     s = f.read()
     f.close()
@@ -130,6 +132,10 @@ def loadrc(ignore_err=False):
         if not ignore_err:
             log('no rc file exists looked at: %s' % rcfile)
             log('cannot continue please make an rcfile')
+            log('    you can make an rcfile by adding a project using')
+            log('    `sw add` command. Alternatively, you can manually')
+            log('    create a ~/.sworkrc. To do so please see the')
+            log('    output of `sw --help`')
         return False
     f = open(rcfile, 'r')
     try:
