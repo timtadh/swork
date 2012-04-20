@@ -7,13 +7,16 @@ Contact: tim.tadh@gmail.com,
 Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 '''
 
-usage_message = \
-'''usage: swork [-h] [start|restore|list] [project_name]
+short_usage_message = \
+'''usage: swork [-h] [start|restore|list] [project_name]'''
 
+usage_message = \
+'''
 setups the enviroment to work on a particular project
 
 flags:
-  -h, --help                       show this help message
+  -h                               shows help message
+  --help                           show an extended help message
 
 sub commands:
 
@@ -127,7 +130,9 @@ def command(f):
 def usage(code=None):
     '''Prints the usage and exits with an error code specified by code. If code
     is not given it exits with error_codes['usage']'''
-    log(usage_message)
+    log(short_usage_message)
+    if code is None or code < 2:
+        log(usage_message)
     if code is None:
         log(extended_message)
         code = error_codes['usage']
@@ -297,7 +302,9 @@ def main():
         usage(error_codes['option'])
 
     for opt, arg in opts:
-        if opt in ('-h', '--help'):
+        if opt in ('-h',):
+            usage(error_codes['usage'])
+        elif opt in ('--help',):
             usage()
         elif opt in ('-v', '--version'):
             log(RELEASE)
