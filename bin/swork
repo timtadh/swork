@@ -6,7 +6,7 @@
 #Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 
 commands=$(/usr/bin/python -m swork $@)
-if [ $? != '0' ]; then
+if (( $? > 1 )); then
     echo "swork did not succeed, see error message and usage info."
     return 1;
 fi
