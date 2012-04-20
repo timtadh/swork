@@ -8,7 +8,7 @@ Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 '''
 
 short_usage_message = \
-'''usage: swork [-h] [start|restore|list] [project_name]'''
+'''usage: swork [-h] [start|add|restore|list|cd|update] [project_name]'''
 
 usage_message = \
 '''
@@ -21,24 +21,26 @@ flags:
 sub commands:
 
   start <project_name>             sets up the enviroment for *project_name*
-    -c                             start and cd into a directory relative to the root
-                                   eg. start -c project_name/some/sub/dir
+    -c                             start and cd into a directory relative to the
+                                       root eg.
+                                       start -c project_name/some/sub/dir
   
   add <project_name>               adds a new project. uses current directory as
                                    the root. prompts for scripts
 
-  restore                          restores the original enviroment for the shell
+  restore                          restores the original enviroment for the
+                                       shell
 
   list                             list the available projects
 
-  cd project_name [sub-path]       cd into a directory relative to the root directory
-     project_name[/sub-path]          of *project_name*
+  cd project_name [sub-path]       cd into a directory relative to the root
+     project_name[/sub-path]           directory of *project_name*
 
   update                           starts auto updater
     --sudo                         use the sudoed version of the update command
     --release=<rel-num>            which release eg. "master", "0.2" etc.
-    --src=<dir>                    what directory should it check the source into
-                                      defaults to $HOME/.src/
+    --src=<dir>                    what directory should it check the source
+                                       into defaults to $HOME/.src/
 '''
 
 extended_message = \
