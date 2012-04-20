@@ -4,7 +4,7 @@
     #or via EECS Department of Case Western Reserve University, Cleveland Ohio
 #Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 
-import os, sys, tempfile, psutil
+import os, sys, tempfile, psutil, subprocess
 
 ## A bunch of cheese to make this more portable around different json libs.
 try:
@@ -34,6 +34,24 @@ def output(s):
     sys.stdout.write(str(s))
     sys.stdout.write('\n')
     sys.stdout.flush()
+
+def edittext(editor, text='', path=None):
+    unlink = True
+    if path is None:
+        fd, path = tmpfile()
+        f = open(path, 'w')
+        f.write(text)
+        f.close()
+    else:
+        assert not text
+        unlink = False
+    subprocess.check_call([editor, path])
+    f = open(path, 'r')
+    s = f.read()
+    f.close()
+    if unlink:
+        os.unlink(path)
+    return s.strip()
 
 ## A utility function stolen from:
 # http://stackoverflow.com/questions/1158076/implement-touch-using-python/1160227#1160227
@@ -107,10 +125,11 @@ def setenv(env):
 def restore_env():
     output(setenv(loadenv()))
 
-def loadrc():
+def loadrc(ignore_err=False):
     if not os.path.exists(rcfile):
-        log('no rc file exists looked at: %s' % rcfile)
-        log('cannot continue please make an rcfile')
+        if not ignore_err:
+            log('no rc file exists looked at: %s' % rcfile)
+            log('cannot continue please make an rcfile')
         return False
     f = open(rcfile, 'r')
     try:
@@ -119,15 +138,26 @@ def loadrc():
         f.close()
     for name, proj in data.iteritems():
         if 'start_cmd' not in proj:
-            log('a start command is not defined for project %s' % name)
+            if not ignore_err:
+                log('a start command is not defined for project %s' % name)
             return False
         if 'teardown_cmd' not in proj:
-            log('a teardown command is not defined for project %s' % name)
+            if not ignore_err:
+                log('a teardown command is not defined for project %s' % name)
             return False
         if 'root' not in proj:
-            log('a root directory is not defined for project %s' % name)
+            if not ignore_err:
+                log('a root directory is not defined for project %s' % name)
             return False
     return data
+
+def addproj(name, root, start, end):
+    rc = loadrc(True)
+    if rc == False: rc = dict()
+    rc.update({name:{'root':root, 'start_cmd':start, 'teardown_cmd':end}})
+    with open(rcfile, 'w') as f:
+        json.dump(rc, f, indent=4)
+    return rc
 
 def pushproj(name):
     cur = open(getfile('cur'), 'w')

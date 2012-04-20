@@ -17,9 +17,12 @@ flags:
 
 sub commands:
 
-  start project_name               sets up the enviroment for *project_name*
+  start <project_name>             sets up the enviroment for *project_name*
     -c                             start and cd into a directory relative to the root
                                    eg. start -c project_name/some/sub/dir
+  
+  add <project_name>               adds a new project. uses current directory as
+                                   the root. prompts for scripts
 
   restore                          restores the original enviroment for the shell
 
@@ -99,6 +102,7 @@ from sworklib import log, output
 
 CWD = os.environ.get('PWD', os.getcwd())
 sworklib.usefiles(['env', 'cur'])
+EDITOR = os.getenv('EDITOR')
 RELEASE = 'master'
 SRC_DIR = "$HOME/.src"
 UPDATE_CMD = (
@@ -107,11 +111,12 @@ UPDATE_CMD = (
 )
 
 error_codes = {
+    'version':0,
     'usage':1,
     'option':2,
     'list':3,
     'rcfile':4,
-    'version':0,
+    'dupname':5,
 }
 
 def command(f):
@@ -162,6 +167,30 @@ def list():
         log(' '*4 + 'root : ' + proj['root'])
         log(' '*4 + 'start_cmd : ' + proj['start_cmd'])
         log(' '*4 + 'teardown_cmd : ' + proj['teardown_cmd'])
+
+@command
+def add(args):
+    '''adds a new project.'''
+
+    if len(args) > 1 or len(args) == 0:
+        log("need to specify project name")
+        usage(error_codes['option'])
+    
+    rc = sworklib.loadrc()
+    if rc == False:
+        usage(error_codes['rcfile'])
+
+    name = args[0]
+    if name in rc:
+        log("already a project with the name %s" % name)
+        usage(error_codes['dupname'])
+    
+    root = os.getcwd()
+    start = "echo '%s setup'; source .swork.activate" % name
+    end = "echo '%s teardown'; source .swork.deactivate" % name
+    sworklib.edittext(EDITOR, path='.swork.activate')
+    sworklib.edittext(EDITOR, path='.swork.deactivate')
+    sworklib.addproj(name, root, start, end)
 
 @command
 def start(args):
