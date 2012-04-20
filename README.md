@@ -41,7 +41,7 @@ Examples
 Add a project:
 
     $ cd to a project directory
-    $ sw add hca
+    $ sw add project_name
     
 you will be prompted to write scripts for startup and teardown.
 
