@@ -38,6 +38,13 @@ swork may also support zsh althought this is entirely untested.
 Examples
 ========
 
+Add a project:
+
+    $ cd to a project directory
+    $ sw add hca
+    
+you will be prompted to write scripts for startup and teardown.
+
 List your projects:
 
     $ swork list
