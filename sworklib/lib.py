@@ -45,6 +45,7 @@ def edittext(editor, text='', path=None):
     else:
         assert not text
         unlink = False
+        touch(path)
     tty = os.ttyname(sys.stdin.fileno())
     stdout = open(tty, 'w')
     subprocess.check_call([editor, path], stdout=stdout, stdin=sys.stdin)
