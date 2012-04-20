@@ -106,7 +106,7 @@ from sworklib import log, output
 CWD = os.environ.get('PWD', os.getcwd())
 sworklib.usefiles(['env', 'cur'])
 EDITOR = os.getenv('EDITOR')
-RELEASE = 'master'
+RELEASE = '0.3'
 SRC_DIR = "$HOME/.src"
 UPDATE_CMD = (
   'pip install --src="%s" --upgrade -e '
