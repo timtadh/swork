@@ -13,57 +13,78 @@ by Tim Henderson (tim.tadh@gmail.com)
 Introduction
 ============
 
-Command line utility to start up enviroments for particular projects. Project configuration scripts can be any executable file and are associated with a particular project via ~/.sworkrc
-file. The utility saves the enviroment variables that exist before its execution and restores
-them as necessary. It can also call teardown scripts as necessary when switching projects (or restoring the original shell).
+Command line utility to start up enviroments for particular projects. Project
+configuration scripts can be any executable file and are associated with a
+particular project via ~/.sworkrc file. The utility saves the enviroment
+variables that exist before its execution and restores them as necessary. It can
+also call teardown scripts as necessary when switching projects (or restoring
+the original shell).
 
-I have previously written very complex enviroment management tools for particular projects.
-Facing the prospect of making yet another project specific tool, I decided to write a general
-purpose extensible tool.
+I have previously written very complex enviroment management tools for
+particular projects.  Facing the prospect of making yet another project specific
+tool, I decided to write a general purpose extensible tool.
 
 Swork is licensed under the terms of GPLv2, see the license file for details.
 
 #### Current Limitations
 
-swork only supports the Bash shell right now. It would be fairly trivially to add another shell
-however, I will only do so if there is a user for it. If you would like to swork with another shell besides bash please email me. (or you know this is the 2011 you could fork it and add it yourself).
+swork only supports the Bash shell right now. It would be fairly trivially to
+add another shell however, I will only do so if there is a user for it. If you
+would like to swork with another shell besides bash please email me. (or you
+know this is the 2011 you could fork it and add it yourself).
 
-swork may also support zsh althought this is entirely untested.
+swork may also support zsh although this is entirely untested.
 
 Examples
 ========
 
+Add a project:
+
+    $ cd to a project directory
+    $ sw add project_name
+    
+you will be prompted to write scripts for startup and teardown. The scripts you
+write will be saved to the projects directory as `.swork.activate` and
+`.swork.deactivate`. (You can add project manually and customize them further by
+editing `~/.sworkrc`)
+
 List your projects:
 
-    $ swork list
-    hca
-        root : /home/hendersont/stuff/Programing/hca
-        cmd : source /home/hendersont/stuff/Programing/hca/setenv
+    $ sw list
+    project1
+        root : /path/to/code/project1
+        start_cmd : echo 'project1 setup'; source .swork.activate
+        teardown_cmd : echo 'project1 teardown'; source .swork.deactivate
     project2
-        root : /home/hendersont/stuff/Programing/project2
-        cmd : source /home/hendersont/envs/project2
+        root : /path/to/code/project2
+        start_cmd : echo 'project2 setup'; source .swork.activate
+        teardown_cmd : echo 'project2 teardown'; source .swork.deactivate
 
 Setup the enviroment:
 
-    $ swork start project_name
+    $ sw start project1
 
-Restore the original enviroment
+This saves all the enivroment variables and sources `start_cmd` in the
+configuration file (`.sworkrc`).
 
-    $ swork restore
+Restore the original enviroment:
+
+    $ sw restore
 
 cd to a project:
 
-    $ swork cd proj1
+    $ sw cd proj1
     $ pwd
     /path/to/proj1
 
 cd to a sub-dir of a project:
 
-    $ swork cd proj1/sub/directory
+    $ sw cd proj1/sub/directory
     $ pwd
     /path/to/proj1/sub/directory
 
-Finally you can have swork automatically cd to a project sub-dir when starting a project by:
+Finally you can have swork automatically cd to a project sub-dir when starting a
+project by:
 
     $ swork start -c proj1/sub/dir
     $ pwd
@@ -73,71 +94,89 @@ Finally you can have swork automatically cd to a project sub-dir when starting a
 Install
 =======
 
-first use pip to install the packages (this install the current stable version 0.2). If
-you would like to install the master remove "@r0.2". Or simply update aftwards with
-`swork update [-s] --release=master`.
+first use pip to install the packages (this installs the current stable version
+0.3). If you would like to install the master remove "@r0.3". Or simply update
+aftwards with `swork update [-s] --release=master`.
 
     pip install psutil # this is not done automatically for some reason...
-    pip install --src="$HOME/.src" -e git://github.com/timtadh/swork.git@r0.2#egg=swork
+    pip install --src="$HOME/.src" -e git://github.com/timtadh/swork.git@r0.3#egg=swork
 
 then modify your .bashrc to make the command an alias for
 
     source swork [args]
 
-eg.
+I call my alias `sw` for convience eg.
 
-    alias swork="source `which swork`"
+    alias sw="source `which swork`"
 
 for the lazy
 
-    echo 'alias swork="source `which swork`"' >> ~/.bashrc
+    echo 'alias sw="source `which swork`"' >> ~/.bashrc
+
+Now to get started using `swork` add a project!
+
+    $ cd to a project
+    $ sw add project_name
 
 ### Updating, Staying Current
 
-You can update one of two ways. First you can use the built in update command. Giving it
-the sudo option causes it to automatically preprend sudo to the generated command. This
-checks out the head of the release branch you are on. (eg. 0.2). See the Usage section
-for more details on the update command.
+You can update one of two ways. First you can use the built in update command.
+Giving it the sudo option causes it to automatically preprend sudo to the
+generated command. This checks out the head of the release branch you are on.
+(eg. 0.2). See the Usage section for more details on the update command.
 
-    swork update [--sudo]
+    sw update [--sudo]
 
-The other way is to use pip. The command below is an example command, and is in fact the
-command generated by `swork update`.
+The other way is to use pip. The command below is an example command, and is in
+fact the command generated by `swork update`.
 
     pip install --src="$HOME/.src" --upgrade -e git://github.com/timtadh/swork.git@r0.2#egg=swork
 
+You can check if there are updates available using:
+
+    sw update [--sudo] --check
+
+Note: You will need to use `--sudo` when updating and checking for updates if
+you installed `swork` as root. 
 
 Usage
 =====
 
-    usage: swork [-h] [start|restore|list] [project_name]
+    usage: swork [-h] [start|add|restore|list|cd|update] [project_name]
 
     setups the enviroment to work on a particular project
 
     flags:
-    -h, --help                       show this help message
+      -h                               shows help message
+      --help                           show an extended help message
 
     sub commands:
-    start project_name               sets up the enviroment for *project_name*
-        -c                           start and cd into a directory relative to the root
-                                     eg. start -c project_name/some/sub/dir
 
-    restore                          restores the original enviroment for the shell
+      start <project_name>             sets up the enviroment for *project_name*
+        -c                             start and cd into a directory relative to the
+                                           root eg.
+                                           start -c project_name/some/sub/dir
 
-    list                             list the available projects
+      add <project_name>               adds a new project. uses current directory as
+                                       the root. prompts for scripts
 
-    cd project_name [sub-path]       cd into a directory relative to the root directory
-       project_name[/sub-path]          of *project_name*
+      restore                          restores the original enviroment for the
+                                           shell
 
-    update_swork                     starts auto updater
-        --sudo                       use the sudoed version of the update command
-        --release=<rel-num>          which release eg. "master", "0.2" etc.
-        --src=<dir>                  what directory should it check the source into
-                                        defaults to $HOME/.src/
+      list                             list the available projects
+
+      cd project_name [sub-path]       cd into a directory relative to the root
+         project_name[/sub-path]           directory of *project_name*
+
+      update                           starts auto updater
+        --sudo                         use the sudoed version of the update command
+        --release=<rel-num>            which release eg. "master", "0.2" etc.
+        --src=<dir>                    what directory should it check the source
+                                           into defaults to $HOME/.src/
 
     rc-file:
-    To use you must setup an rc file in you home directory.
-    eg.
+      To use you must setup an rc file in you home directory.
+      eg.
         $ touch ~/.sworkrc
     the contents should be something like:
         {

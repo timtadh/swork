@@ -8,7 +8,7 @@ Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 '''
 
 short_usage_message = \
-'''usage: swork [-h] [start|restore|list] [project_name]'''
+'''usage: swork [-h] [start|add|restore|list|cd|update] [project_name]'''
 
 usage_message = \
 '''
@@ -21,24 +21,33 @@ flags:
 sub commands:
 
   start <project_name>             sets up the enviroment for *project_name*
-    -c                             start and cd into a directory relative to the root
-                                   eg. start -c project_name/some/sub/dir
+    -c                             start and cd into a directory relative to the
+                                       root eg.
+                                       start -c project_name/some/sub/dir
   
   add <project_name>               adds a new project. uses current directory as
                                    the root. prompts for scripts
 
-  restore                          restores the original enviroment for the shell
+  restore                          restores the original enviroment for the
+                                       shell
 
   list                             list the available projects
 
-  cd project_name [sub-path]       cd into a directory relative to the root directory
-     project_name[/sub-path]          of *project_name*
+  cd project_name [sub-path]       cd into a directory relative to the root
+     project_name[/sub-path]           directory of *project_name*
 
   update                           starts auto updater
     --sudo                         use the sudoed version of the update command
     --release=<rel-num>            which release eg. "master", "0.2" etc.
-    --src=<dir>                    what directory should it check the source into
-                                      defaults to $HOME/.src/
+    --src=<dir>                    what directory should it check the source
+                                       into defaults to $HOME/.src/
+    --check                        check to see if updates are needed. takes
+                                       into account the value of the other
+                                       flags. eg. If release is a different
+                                       release it will check if updating matters
+                                       based on whether or not they are at the
+                                       same commit. Only "commit" is ignored.
+    --commit=<commitid>            updates to a specific commit.
 '''
 
 extended_message = \
@@ -98,7 +107,7 @@ $ pwd
 '''
 
 import sys, os
-from subprocess import check_call as run
+from subprocess import check_output as run
 from getopt import getopt, GetoptError
 import sworklib
 from sworklib import log, output
@@ -181,9 +190,9 @@ def add(args):
         log("need to specify project name")
         usage(error_codes['option'])
     
-    rc = sworklib.loadrc()
+    rc = sworklib.loadrc(True)
     if rc == False:
-        usage(error_codes['rcfile'])
+        rc = dict()
 
     name = args[0]
     if name in rc:
@@ -248,10 +257,34 @@ def restore():
     sworklib.restore_env()
     output('cd %s' % (CWD))
 
+def check_update(src_dir, sudo, release):
+    if release[0].isdigit(): release = 'r' + release
+    src_dir = os.path.abspath(os.path.expandvars(src_dir))
+    local = 'master' # for some reason pip always has the master branch
+                     # be whatever the user is using. Eg. the user may be
+                     # on r0.3 but the git repository git manages will
+                     # call that branch 'master' even though the contents
+                     # are r0.3. Therefore, we always compare to the local
+                     # master
+    remote = 'refs/remotes/origin/' + release
+    run(['sudo', 'git', '--git-dir=%s/swork/.git' % src_dir, 'fetch', 
+      'origin', "%s:%s" % (release,remote)])
+    lmsg = run(['git', '--git-dir=%s/swork/.git' % src_dir, 'show-branch',
+      '--sha1-name', local])
+    rmsg = run(['git', '--git-dir=%s/swork/.git' % src_dir, 'show-branch',
+      '--sha1-name', remote])
+    def getcommit(msg):
+        return msg.replace('[','').replace(']','').split(' ', 1)[0]
+    if getcommit(lmsg) == getcommit(rmsg):
+        log('No update needed already using the latest %s' % release)
+    else:
+        log('update needed to use the latest %s' % release)
+
 @command
 def update(args):
     try:
-        opts, args = getopt(args, 'sr:', ['sudo', 'src=', 'release=', 'commit='])
+        opts, args = getopt(
+            args, 'sr:', ['sudo', 'check', 'src=', 'release=', 'commit='])
     except GetoptError, err:
         log(err)
         usage(error_codes['option'])
@@ -260,6 +293,7 @@ def update(args):
     src_dir = SRC_DIR
     release = RELEASE
     commit = None
+    check = False
     for opt, arg in opts:
         if opt in ('-s', '--sudo'):
             sudo = True
@@ -269,6 +303,12 @@ def update(args):
             src_dir = arg
         elif opt in ('--commit',):
             commit = arg
+        elif opt in ('--check',):
+            check = True
+
+    if check:
+        check_update(src_dir,sudo,release)
+        sys.exit(0)
 
     if release[0].isdigit():
         release = 'r' + release
