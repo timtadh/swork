@@ -65,7 +65,10 @@ Setup the enviroment:
     $ sw start project1
 
 This saves all the enivroment variables and sources `start_cmd` in the
-configuration file (`.sworkrc`).
+configuration file (`.sworkrc`). If you added the project using `sw add` then it
+will source your `.swork.activate` file. Additionally, (no matter how you
+created project) it will create a new enviroment variable `SW_PROJECT_ROOT`
+containing the path to the root of your project.
 
 Restore the original enviroment:
 
