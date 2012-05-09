@@ -243,6 +243,7 @@ def start(args):
 
     sworklib.popproj()
     sworklib.restore_env()
+    output('export SW_PROJECT_ROOT=%s' % (root))
     output('cd %s' % (root))
     output('%s' % (cmd))
     output('cd %s' % (CWD))
