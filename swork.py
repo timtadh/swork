@@ -36,6 +36,8 @@ sub commands:
   cd project_name [sub-path]       cd into a directory relative to the root
      project_name[/sub-path]           directory of *project_name*
 
+  path project_name[/sub-path]     echo out the full path
+
   update                           starts auto updater
     --sudo                         use the sudoed version of the update command
     --release=<rel-num>            which release eg. "master", "0.2" etc.
@@ -149,7 +151,7 @@ def usage(code=None):
 
 @command
 def cd(args):
-    '''cd to the root directory, or too the sub-directory indicated'''
+    '''cd to the root directory, or to the sub-directory indicated'''
     if len(args) < 1:
         log('cd requires a project_name, you gave %s' % str(args))
         usage(error_codes['option'])
@@ -169,6 +171,29 @@ def cd(args):
     if next == '' and len(args) == 2:
         next = args[1]
     output("cd %s" % os.path.join(root, next))
+
+@command
+def path(args):
+    '''echo the path to the root directory, or to the sub-directory indicated'''
+    if len(args) < 1:
+        log('cd requires a project_name, you gave %s' % str(args))
+        usage(error_codes['option'])
+    project_name = args[0]
+    next = ''
+    if os.path.sep in project_name:
+        project_name, next = project_name.split(os.path.sep, 1)
+    rc = sworklib.loadrc()
+    if rc == False:
+        usage(error_codes['rcfile'])
+    if project_name not in rc:
+        log('the project %s is not defined' % project_name)
+        sys.exit(error_codes['rcfile'])
+    proj = rc[project_name]
+    root = proj['root']
+
+    if next == '' and len(args) == 2:
+        next = args[1]
+    output("echo %s" % os.path.join(root, next))
 
 @command
 def list():
@@ -360,8 +385,9 @@ def main():
         log('command %s is not available' % sub_cmd)
         usage(error_codes['option'])
 
-    if sworklib.file_empty('env'):
-        sworklib.dumpenv()
+    if sub_cmd != 'path':
+        if sworklib.file_empty('env'):
+            sworklib.dumpenv()
 
     cmd = commands[sub_cmd]
     if cmd.func_code.co_argcount == 1:

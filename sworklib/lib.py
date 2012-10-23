@@ -183,3 +183,4 @@ def popproj():
     proj = rc[name]
     output('cd %s' % (proj['root']))
     output(proj['teardown_cmd'])
+
