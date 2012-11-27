@@ -193,7 +193,11 @@ def path(args):
 
     if next == '' and len(args) == 2:
         next = args[1]
-    output("echo %s" % os.path.join(root, next))
+
+    if next:
+        output("echo %s" % os.path.join(root, next))
+    else:
+        output("echo %s" % root)
 
 @command
 def list():
