@@ -113,11 +113,12 @@ from subprocess import check_output as run
 from getopt import getopt, GetoptError
 import sworklib
 from sworklib import log, output
+import swork_version
 
 CWD = os.environ.get('PWD', os.getcwd())
 sworklib.usefiles(['env', 'cur'])
 EDITOR = os.getenv('EDITOR')
-RELEASE = '0.4'
+RELEASE = swork_version.RELEASE
 SRC_DIR = "$HOME/.src"
 UPDATE_CMD = (
   'pip install --src="%s" --upgrade -e '
