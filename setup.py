@@ -4,7 +4,8 @@ try:
     # arguments that distutils doesn't understand
     setuptools_kwargs = {
         'install_requires': [
-            'psutil'
+            'psutil',
+            'optutils',
         ],
         'provides': ['swork'],
         'zip_safe': True
