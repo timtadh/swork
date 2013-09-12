@@ -7,21 +7,6 @@ Contact: tim.tadh@gmail.com,
 Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 '''
 
-short_usage_message = \
-'''usage: swork [-h] [start|add|restore|list|cd|update] [project_name]
-'''
-
-usage_message = \
-'''
-setups the enviroment to work on a particular project
-
-flags:
-  -h                               shows help message
-  --help                           show an extended help message
-  --help-config                    show the help on the config file
-  --help-examples                  show some usage examples
-'''
-
 config_message = \
 '''rc-file:
   To use you must setup an rc file in you home directory.
@@ -156,8 +141,16 @@ def check_update(src_dir, sudo, release):
 
 
 @optutils.main(
-    short_usage_message,
-    usage_message,
+    'usage: swork [-h] [start|add|restore|list|cd|update] [project_name]',
+    '''
+    setups the enviroment to work on a particular project
+
+    flags:
+      -h                               shows help message
+      --help                           show an extended help message
+      --help-config                    show the help on the config file
+      --help-examples                  show some usage examples
+    ''',
     'hv',
     ['help',
      'help-config',

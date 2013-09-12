@@ -8,7 +8,9 @@
 commands=$(/usr/bin/python -m swork $@)
 exitcode=$?
 
-if (( $exitcode != 0 && $exitcode != 1 && $exitcode != 126 )); then
+if (( $exitcode != 0 && $exitcode != 1 && $exitcode != 9 && $exitcode != 126 ));
+then
+    echo $exitcode
     echo "swork failed, see error and usage info";
 elif (( $exitcode == 0 )); then
     IFS=$'\n'
