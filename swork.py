@@ -163,11 +163,10 @@ def check_update(src_dir, sudo, release):
     '''
     setups the enviroment to work on a particular project
 
-    flags:
-      -h                               shows help message
-      --help                           show an extended help message
-      --help-config                    show the help on the config file
-      --help-examples                  show some usage examples
+    Options
+         -h, help                      shows help message
+         --help-config                 show the help on the config file
+         --help-examples               show some usage examples
     ''',
     'hv',
     ['help',

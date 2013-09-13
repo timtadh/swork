@@ -89,7 +89,7 @@ def file_empty(fname):
 
 def dumpenv():
     envname = getfile('env')
-    log('saving enviroment to ... %s' % envname)
+    #log('saving enviroment to ... %s' % envname)
     env = open(envname, 'w')
     try:
         collect = list()
