@@ -128,6 +128,22 @@ def setenv(env):
 def restore_env():
     output(setenv(loadenv()))
 
+def validaterc(data):
+    for name, proj in data.iteritems():
+        if 'start_cmd' not in proj:
+            if not ignore_err:
+                log('a start command is not defined for project %s' % name)
+            return False
+        if 'teardown_cmd' not in proj:
+            if not ignore_err:
+                log('a teardown command is not defined for project %s' % name)
+            return False
+        if 'root' not in proj:
+            if not ignore_err:
+                log('a root directory is not defined for project %s' % name)
+            return False
+    return True
+
 def loadrc(ignore_err=False):
     if not os.path.exists(rcfile):
         if not ignore_err:
@@ -143,28 +159,28 @@ def loadrc(ignore_err=False):
         data = json_load(f)
     finally:
         f.close()
-    for name, proj in data.iteritems():
-        if 'start_cmd' not in proj:
-            if not ignore_err:
-                log('a start command is not defined for project %s' % name)
-            return False
-        if 'teardown_cmd' not in proj:
-            if not ignore_err:
-                log('a teardown command is not defined for project %s' % name)
-            return False
-        if 'root' not in proj:
-            if not ignore_err:
-                log('a root directory is not defined for project %s' % name)
-            return False
-    return data
+    if validaterc(data):
+        return data
+    return False
+
+def saverc(rc):
+    if validaterc(rc):
+        with open(rcfile, 'w') as f:
+            json.dump(rc, f, indent=4)
+        return True
+    return False
 
 def addproj(name, root, start, end):
     rc = loadrc(True)
     if rc == False: rc = dict()
     rc.update({name:{'root':root, 'start_cmd':start, 'teardown_cmd':end}})
-    with open(rcfile, 'w') as f:
-        json.dump(rc, f, indent=4)
-    return rc
+    return saverc(rc)
+
+def rmproj(name):
+    rc = loadrc(True)
+    if rc == False: rc = dict()
+    del rc[name]
+    return saverc(rc)
 
 def pushproj(name):
     cur = open(getfile('cur'), 'w')

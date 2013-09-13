@@ -8,11 +8,14 @@ Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 '''
 
 config_message = \
-'''rc-file:
-  To use you must setup an rc file in you home directory.
-  eg.
-    $ touch ~/.sworkrc
-the contents should be something like:
+'''The RC File.
+
+Swork is capable of setting up its own configuration file. (Just use the `add`
+command). However, here is now the configuration file is structured in case you
+want to edit it.
+
+Location: `$HOME/.sworkrc`
+
     {
         "project1" : {
             "root":"/path/to/project/root",
@@ -25,8 +28,10 @@ the contents should be something like:
             "teardown_cmd":"echo 'project2 teardown'"
         }
     }
+
 The contents must be valid json (as recognized by the python json lib) and
 must have the schema:
+
     project_name1 ->
         root -> string
         start_cmd -> string
@@ -35,33 +40,46 @@ must have the schema:
         root -> string
         start_cmd -> string
         teardown_cmd -> string
-where project_name can be any string (including the empty string).
+
+- project_name is a string and the name of the project.
+- root is the file system path to the root directory of the project.
+- start_cmd will be sourced by the shell on startup.
+- teardown_command will be sourced by the shell at teardown.
+
+`sw add` uses the following templates to generate start_cmd/teardown_cmd(s)
+
+    echo "start/stop <project-name>"; source <path-to-[de]activate>
+
 '''
 
 examples_message = \
-'''Examples:
+'''Some Examples
 
-Start working on a project call, day_job
+$ # add a project
+$ cd /path/to/project
+$ sw add my_project
+
+$ # Start working on a project called day_job
 $ swork start day_job
 
-Stop working on the last started project and restore the shell to the original
-state:
+$ # Stop working on the last started project and restore the shell to the
+$ # original state:
 $ swork restore
 
-cd to a project:
+$ # cd to a project:
 $ swork cd proj1
 $ pwd
 /path/to/proj1
 
-cd to a sub-dir of a project:
-$ swork cd proj1 sub/directory
-$ pwd
-/path/to/proj1/sub/directory
-
-alternate syntax:
+$ # cd to a sub-dir of a project:
 $ swork cd proj1/sub/directory
 $ pwd
 /path/to/proj1/sub/directory
+
+$ # start and cd to a project sub dir
+$ sw start -c project/sub/dir
+$ pwd
+/path/to/proj1/sub/dir
 
 '''
 
@@ -236,6 +254,52 @@ def main(argv, util, parser):
         start = "echo '%s setup'; %s " % (name, activate)
         end = "echo '%s teardown'; %s " % (name, deactivate)
         sworklib.addproj(name, root, start, end)
+
+    @util.command(
+        'remove a project from the rc file.',
+        '''
+        sw rm <project-name>
+
+        Options
+            -h, help                  Show this help message
+
+        Specs
+            <project-name>
+                Name of the project to add.
+        ''',
+        'h',
+        ['help'],
+    )
+    def rm(argv, util, parser):
+        '''adds a new project.'''
+
+        opts, args = parser(argv)
+        for opt, arg in opts:
+            if opt in ('-h','--help',):
+                util.usage()
+
+        if len(args) > 1 or len(args) == 0:
+            log("need to specify project name")
+            usage(error_codes['option'])
+
+        rc = sworklib.loadrc(True)
+        if rc == False:
+            rc = dict()
+
+        name = args[0]
+        if name not in rc:
+            log("project '%s' not in the rc file" % name)
+            usage(error_codes['dupname'])
+
+        log("Are you sure you want to remove %s? [yes|no]" % name, )
+        sure = raw_input()
+        if sure == "yes":
+            log("removing %s" % name)
+            sworklib.rmproj(name)
+        elif sure[0].lower() == "y":
+            log("type 'yes' to remove, cowardly exiting")
+        else:
+            log("did not remove the project %s" % name)
 
     @util.command(
         'List all available projects.',
