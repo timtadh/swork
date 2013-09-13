@@ -93,6 +93,7 @@ from optutils import log, output, error_codes, add_code
 import sworklib
 import swork_version
 
+
 CWD = os.environ.get('PWD', os.getcwd())
 sworklib.usefiles(['env', 'cur'])
 EDITOR = os.getenv('EDITOR')
@@ -109,29 +110,28 @@ add_code('list'); error_codes['list'] = 126
 add_code('rcfile')
 add_code('dupname')
 
+
 def version():
     '''Print version and exit'''
     log('swork version :', RELEASE)
     sys.exit(error_codes['version'])
 
-def command(f): pass
 
 def parse_project(spec):
     if os.path.sep in spec:
         return spec.split(os.path.sep, 1)
     return spec, ''
 
+
 def load_project(project_name):
     rc = sworklib.loadrc()
     if rc == False:
         log("Couldn't load the rcfile")
-        usage(error_codes['rcfile'])
+        sys.exit(error_codes['rcfile'])
     if project_name not in rc:
         log('the project %s is not defined' % project_name)
         sys.exit(error_codes['rcfile'])
     return rc[project_name]
-
-
 
 
 def check_update(src_dir, sudo, release):
@@ -176,13 +176,18 @@ def check_update(src_dir, sudo, release):
      'version'],
 )
 def main(argv, util, parser):
+
     ## PS1 not being available is a strong indication this file wasn't sourced
     ## correctly
     if 'PS1' not in os.environ:
-        log('WARNING - you should run this by sourcing swork.')
+        log('*'*72)
+        log(' '*10, 'WARNING - you should run this by sourcing swork.')
+        log('*'*72)
+        log()
 
     if sworklib.file_empty('env'):
         sworklib.dumpenv()
+
 
     @util.command(
         'add a new project.',
@@ -229,7 +234,7 @@ def main(argv, util, parser):
 
         if len(args) > 1 or len(args) == 0:
             log("need to specify project name")
-            usage(error_codes['option'])
+            util.usage(error_codes['option'])
 
         rc = sworklib.loadrc(True)
         if rc == False:
@@ -238,7 +243,7 @@ def main(argv, util, parser):
         name = args[0]
         if name in rc:
             log("already a project with the name %s" % name)
-            usage(error_codes['dupname'])
+            util.usage(error_codes['dupname'])
 
         if activate is None and not no_create:
             activate = '.swork.activate'
@@ -254,6 +259,7 @@ def main(argv, util, parser):
         start = "echo '%s setup'; %s " % (name, activate)
         end = "echo '%s teardown'; %s " % (name, deactivate)
         sworklib.addproj(name, root, start, end)
+
 
     @util.command(
         'remove a project from the rc file.',
@@ -280,7 +286,7 @@ def main(argv, util, parser):
 
         if len(args) > 1 or len(args) == 0:
             log("need to specify project name")
-            usage(error_codes['option'])
+            util.usage(error_codes['option'])
 
         rc = sworklib.loadrc(True)
         if rc == False:
@@ -289,7 +295,7 @@ def main(argv, util, parser):
         name = args[0]
         if name not in rc:
             log("project '%s' not in the rc file" % name)
-            usage(error_codes['dupname'])
+            util.usage(error_codes['dupname'])
 
         log("Are you sure you want to remove %s? [yes|no]" % name, )
         sure = raw_input()
@@ -300,6 +306,7 @@ def main(argv, util, parser):
             log("type 'yes' to remove, cowardly exiting")
         else:
             log("did not remove the project %s" % name)
+
 
     @util.command(
         'List all available projects.',
@@ -326,13 +333,14 @@ def main(argv, util, parser):
         rc = sworklib.loadrc()
         if rc == False:
             log("Couldn't load the rcfile")
-            usage(error_codes['rcfile'])
+            util.usage(error_codes['rcfile'])
         for name, proj in rc.iteritems():
             log(name)
             log(' '*4 + 'root : ' + proj['root'])
             log(' '*4 + 'start_cmd : ' + proj['start_cmd'])
             log(' '*4 + 'teardown_cmd : ' + proj['teardown_cmd'])
         sys.exit(error_codes['list'])
+
 
     @util.command(
         'Restores the original environment for the shell',
@@ -360,6 +368,7 @@ def main(argv, util, parser):
         sworklib.popproj()
         sworklib.restore_env()
         output('cd %s' % (CWD))
+
 
     @util.command(
         'start work on a project',
@@ -395,7 +404,7 @@ def main(argv, util, parser):
 
         if len(args) < 1:
             log('start requires a project_name')
-            usage(error_codes['option'])
+            util.usage(error_codes['option'])
 
         next = ''
         if cd:
@@ -416,6 +425,7 @@ def main(argv, util, parser):
         sworklib.pushproj(project_name)
         if cd:
             output("cd %s" % os.path.join(root, next))
+
 
     @util.command(
         'echo the path to the project ',
@@ -459,6 +469,7 @@ def main(argv, util, parser):
         else:
             output("echo %s" % root)
 
+
     @util.command(
         'cd the path to the project ',
         '''
@@ -499,6 +510,7 @@ def main(argv, util, parser):
             output("cd %s" % os.path.join(root, next))
         else:
             output("cd %s" % root)
+
 
     @util.command(
         'start the autoupdater',
@@ -564,6 +576,7 @@ def main(argv, util, parser):
         else:
             output(cmd)
 
+
     opts, args = parser(argv)
     for opt, arg in opts:
         if opt in ('-h','--help',):
@@ -578,6 +591,7 @@ def main(argv, util, parser):
             version()
 
     util.run_command(args)
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])
