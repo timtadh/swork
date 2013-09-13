@@ -36,8 +36,8 @@ know this is the 2013 you could fork it and add it yourself).
 swork may also support zsh although this is entirely untested.
 
 
-Intalling from PyPI
-===================
+Installing from PyPI
+====================
 
 Install the package
 
