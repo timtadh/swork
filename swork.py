@@ -181,6 +181,8 @@ def main(argv, util, parser):
     if 'PS1' not in os.environ:
         log('*'*72)
         log(' '*10, 'WARNING - you should run this by sourcing swork.')
+        log(' '*3,
+        '''try running: echo 'alias sw="source `which swork`"' >> ~/.bashrc''')
         log('*'*72)
         log()
 
