@@ -226,9 +226,9 @@ def main(argv, util, parser):
             if opt in ('-h','--help',):
                 util.usage()
             elif opt in ('-a','--activate',):
-                activate = util.assert_file_exits(arg)
+                activate = util.assert_file_exists(arg)
             elif opt in ('-d','--deactivate',):
-                deactivate = util.assert_file_exits(arg)
+                deactivate = util.assert_file_exists(arg)
             elif opt in ('--no-create',):
                 no_create = True
 
