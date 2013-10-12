@@ -409,9 +409,9 @@ def main(argv, util, parser):
 
         next = ''
         if cd:
-            project_name = ' '.join(args)
-        else:
             project_name, next = parse_project(' '.join(args))
+        else:
+            project_name = ' '.join(args)
 
         proj = load_project(project_name)
         cmd = proj['start_cmd']
