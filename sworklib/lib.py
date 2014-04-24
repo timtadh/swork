@@ -19,7 +19,7 @@ else:
         data = f.read()
         return json.read(data)
 
-shellpid = str(psutil.Process(os.getppid()).ppid)
+shellpid = str(psutil.Process(os.getppid()).ppid())
 tmpdir = tempfile.gettempdir()
 datadir = os.path.join(tmpdir, 'swork')
 homedir = os.path.abspath(os.environ.get('HOME', ''))
