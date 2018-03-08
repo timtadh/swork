@@ -5,15 +5,13 @@
     #or via EECS Department of Case Western Reserve University, Cleveland Ohio
 #Copyright: 2011 All Rights Reserved, Licensed under the GPLv2, see LICENSE
 
-commands=$(/usr/bin/python -m swork $@)
-exitcode=$?
-
-if (( $exitcode == 0 )); then
-    IFS=$'\n'
-    for cmd in $commands
-    do
-        eval $cmd;
-    done
-    unset IFS
+COMMANDS=$(mktemp -t swork-commands-XXXX)
+cleanup() {
+	rm $COMMANDS
+}
+trap cleanup 0
+if /usr/bin/python -m swork $@ > $COMMANDS; then
+	source $COMMANDS
 fi
-
+trap '' 0
+cleanup
