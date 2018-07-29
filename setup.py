@@ -5,7 +5,7 @@ try:
     setuptools_kwargs = {
         'install_requires': [
             'psutil',
-            'optutils==.02.6',
+            'optutils>=0.3',
         ],
         'provides': ['swork'],
         'zip_safe': True
